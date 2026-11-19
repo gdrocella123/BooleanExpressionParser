@@ -27,9 +27,7 @@ public class BooleanExpressionParser {
 		
 		Deque<String> stack = new ArrayDeque<>();
 		Deque<BooleanExpression> expStack = new ArrayDeque<>();
-		
-		Node bet = new Node();
-		
+				
 		while(curr < expSz) {
 			String currStr = boolExpression.substring(curr, curr+1);
 			
