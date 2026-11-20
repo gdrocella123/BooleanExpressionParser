@@ -20,7 +20,6 @@ public class BooleanExpressionParser {
 		this.boolExpression = boolExpression;
 	}
 	
-	// ((T | T) & ( T & F))
 	public BooleanExpression parse() throws Exception {
 		int curr = 0;
 		int expSz = boolExpression.length();
@@ -36,11 +35,15 @@ public class BooleanExpressionParser {
 			}
 			else if (currStr.equals(")")) {
 				String off = stack.pop();
-				if (!off.equals("(")) {
-					throw new Exception("Invalid Boolean Expression.");
-				}
 				
 				BooleanExpression operand1 = expStack.pop();
+				
+				if (operand1 instanceof True || operand1 instanceof False) {
+					expStack.push(operand1);
+					curr++;
+					continue;
+				}
+				
 				Operator op = (Operator)expStack.pop();
 				
 				if (op instanceof BinaryOperator) {
@@ -50,7 +53,8 @@ public class BooleanExpressionParser {
 					((BinaryOperator)op).setRight(operand2);
 					expStack.push(op);
 				}
-				else {
+				else if (op instanceof UnaryOperator) {
+					System.out.println("Here1");
 					((UnaryOperator)op).setOperand(operand1);
 					expStack.push(op);
 				}
@@ -78,7 +82,40 @@ public class BooleanExpressionParser {
 			curr++;
 		}
 		
-		return expStack.pop();
+		if (!stack.isEmpty()) {
+			throw new Exception("Parentheses are unbalanced.");
+		}
+		
+		BooleanExpression retExp = null;
+		
+		while (expStack.size() > 1) {
+			//System.out.println("Executing");
+			BooleanExpression currExp = expStack.pop();
+
+			BooleanExpression nextExp = expStack.pop();
+
+			if (nextExp instanceof Operator && nextExp instanceof UnaryOperator) {
+				UnaryOperator op = (UnaryOperator)nextExp;
+				op.setOperand(currExp);
+				
+				expStack.push((BooleanExpression)op);
+			}
+			else if (nextExp instanceof Operator && nextExp instanceof BinaryOperator) {
+				BinaryOperator bop = (BinaryOperator)nextExp;
+				BooleanExpression leftExp = expStack.pop();
+				
+				bop.setLeft(leftExp);
+				bop.setRight(currExp);
+				expStack.push(bop);
+			}
+			else {
+				throw new Exception("Invalid Boolean Expression.");
+			}
+		}
+		
+		retExp = expStack.pop();
+		
+		return retExp;
 	}
 	
 	
