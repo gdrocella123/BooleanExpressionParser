@@ -3,6 +3,7 @@ package com.mastercoderx.bool.expression.parser;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+import com.mastercoderx.exceptions.InvalidBooleanExpressionException;
 import com.mastercoderx.types.And;
 import com.mastercoderx.types.BinaryOperator;
 import com.mastercoderx.types.BooleanExpression;
@@ -82,7 +83,7 @@ public class BooleanExpressionParser {
 		}
 		
 		if (!stack.isEmpty()) {
-			throw new Exception("Parentheses are unbalanced.");
+			throw new InvalidBooleanExpressionException("Parentheses are unbalanced.");
 		}
 		
 		BooleanExpression retExp = null;
@@ -108,7 +109,7 @@ public class BooleanExpressionParser {
 				expStack.push(bop);
 			}
 			else {
-				throw new Exception("Invalid Boolean Expression.");
+				throw new InvalidBooleanExpressionException("Invalid Boolean Expression.");
 			}
 		}
 		
