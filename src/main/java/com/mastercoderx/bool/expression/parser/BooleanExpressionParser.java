@@ -54,7 +54,6 @@ public class BooleanExpressionParser {
 					expStack.push(op);
 				}
 				else if (op instanceof UnaryOperator) {
-					System.out.println("Here1");
 					((UnaryOperator)op).setOperand(operand1);
 					expStack.push(op);
 				}
